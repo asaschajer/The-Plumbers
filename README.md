@@ -4,3 +4,7 @@ Final project - MET2J
 1. Clone the repositories
 2. Open it
 LA casta 
+
+
+"ontology/occupation_label":
+"ontology/occupation_label": 
