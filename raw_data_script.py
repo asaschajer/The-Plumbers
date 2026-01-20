@@ -13,8 +13,8 @@ for n in range(26):
     with open(f"data/{data_name[n]}", encoding='utf-8') as file:
         data = json.load(file)
     for d in data:
-        occupation = d.get('ontology/occupation_label')
-        if occupation == 'Journalist' or ((isinstance(occupation, list)) and 'Journalist' in occupation):
+        occupation = d['ontology/occupation_label']
+        if occupation == 'Journalist' or (occupation is list and 'Journalist' in occupation):
             journalists.append(d)
     with open('journalists.json', 'w', encoding='utf-8') as file:
         json.dump(journalists, file, indent=4, ensure_ascii=0)
