@@ -43,7 +43,9 @@ ggplot(data = new_df) +
     labs(x="Death count", y="Death cause", title = "Count of Hazardous and non hazardous deaths", subtitle= "DQ:How prevalent are violent death causes (assassination, sniper, hang,
 suicide, concussion, decapitation) among journalists?")+
   theme(plot.title = element_text(face="bold", size= 14))+
-  geom_col()+
-  scale_x_continuous(breaks = seq(0, 12, by = 1))
+  scale_x_continuous(breaks = seq(0, 12, by = 1))+
+  geom_col(fill="#697fb3ff")
+
+
 ggsave("Causes_of_death_grouped.png")
 
