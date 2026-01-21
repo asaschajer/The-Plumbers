@@ -13,7 +13,7 @@ df <- d|>
   #filter(death_counts != 'Systemic lupus erythematosus' |death_counts != 'Stroke'|death_counts !='Scrub typhus'|death_counts !='Respiratory disease'|death_counts !='Pneumonia'|death_counts !='Mesothelioma'|death_counts !='Intracranial aneurysm'|death_counts !='Endocarditis'|death_counts !='Apoplexy'|death_counts !='Aorta | Aneurysm'|death_counts !='Amyotrophic lateral sclerosis')
   filter(death_cause == 'Brain tumor'|death_cause =='Cancer'|death_cause =='Assassination'|death_cause =='Decapitation'|death_cause =='Brain tumor'|death_cause =='Colorectal cancer'|death_cause =='Myocardial infarction'|death_cause =='Renal failure'|death_cause =='Ballistic trauma'|death_cause =='Colorectal cancer'|death_cause =='Concussion | Suicide'|death_cause =='Esophageal cancer'|death_cause =='Execution by firing squad'|death_cause =='Hanging'|death_cause =='Sniper'|death_cause =='Suicide')
 
-print(df, n=40)
+#print(df, n=40)
 
 #Exploring data set
 #glimpse(d)
@@ -23,8 +23,9 @@ print(df, n=40)
 ggplot(data = df) +
   aes(x = death_cause, y=death_counts) +
     labs(x="Death Cause", y='Number of deaths')+
+  theme(plot.title = element_text(face="bold", size= 14))+
   geom_bar(stat="summary")
-ggsave("Causes_of_death_ungrouped.pdf",width=10,height=10)
+# ggsave("Causes_of_death_ungrouped.png")
 
 new_df <- df|>
   pivot_wider(names_from=death_cause, values_from=death_counts)|>
@@ -34,8 +35,7 @@ new_df <- df|>
   select(Death_cause,Death_counts)|>
   arrange(desc(Death_counts))
   #grouped_hazard_deaths =group_by('Assassination', 'Decapitation','Ballistic trauma','Concussion|Suicide','Hanging','Sniper','Suicide')
-
-print(new_df)
+# print(new_df)
 
 ggplot(data = new_df) +
   # arrange(desc(new_df))+
