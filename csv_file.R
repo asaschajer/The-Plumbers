@@ -20,7 +20,6 @@ bd_place <- bd_place_data |>
 
 ggplot(bd_place) +
   aes(x = birth_death, y = total) +
-  geom_col(position = 'dodge') +
   labs (
     title = 'Comparison of birth place and death place',
     subtitle = 'DQ: How often do journalists die in a different country or location than \nwhere they were born?',
@@ -29,7 +28,8 @@ ggplot(bd_place) +
   ) +
   scale_x_discrete(labels = c('Locations coincide', 'Locations differ')) +
   theme_minimal() +
-  theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14))
+  theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14))+
+  geom_col(position = 'dodge', fill = "#697fb3ff")
 
 ggsave('Comparison_of_birth_place_and_death_place_BAR_PLOT.png')
 
