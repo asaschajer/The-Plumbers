@@ -1,6 +1,31 @@
 # Calculate the journalist life length
 library(tidyverse)
-library(readr)
+library(dplyr)
+
+journalists <- read_csv('journalists.csv') |>
+  select("title", 
+    "ontology/occupation_label", 
+    "ontology/birthYear", 
+    "ontology/deathYear", 
+    'ontology/birthPlace_label',
+    'ontology/deathPlace_label'
+  ) |>
+  rename(
+    'occupation' = 'ontology/occupation_label',
+    'birth_year' = 'ontology/birthYear', 
+    'death_year' = 'ontology/deathYear', 
+    'birth_place' = 'ontology/birthPlace_label', 
+    'death_place' = 'ontology/deathPlace_label'
+  ) |>
+  mutate(
+    birth_year = as.numeric(birth_year), 
+    death_year = as.numeric(death_year), 
+  ) |>  
+  mutate(
+    bd_coincide = (birth_place == death_place),
+    life_length = death_year - birth_year
+  ) |>
+  filter(death_year >= 1900)
 
 # life_length_plot <- read_csv('journalists.csv') |>
 #   select("title", "ontology/occupation_label", "ontology/birthYear", "ontology/deathYear")|>
@@ -17,6 +42,7 @@ library(readr)
 
 # ggsave('life_length.png', plot = life_length_plot, width = 10, height = 5)
 
+#avr life span of journalist per year
 avr_life_span_plot <- read_csv('journalists.csv') |>
   select("title", "ontology/occupation_label", "ontology/birthYear", "ontology/deathYear")|>
   na.omit()|>
@@ -33,6 +59,52 @@ avr_life_span_plot <- read_csv('journalists.csv') |>
   geom_line(color = "#697fb3ff")
 
 ggsave('avr_life_span.png', plot = avr_life_span_plot, width = 10, height = 5)
+
+year_cat <- function(death_year) {
+  if (death_year <= 1910){
+    return("1900-1910")
+  } else if (death_year <= 1920) {
+    return("1910-1920")
+  } else if (death_year <= 1930) {
+    return("1920-1930")
+  } else if (death_year <= 1940) {
+    return("1930-1940")
+  } else if (death_year <= 1950) {
+    return("1940-1950")
+  } else if (death_year <= 1960) {
+    return("1950-1960")
+  } else if (death_year <= 1970) {
+    return("1960-1970")
+  } else if (death_year <= 1980) {
+    return("1970-1980")
+  } else if (death_year <= 1990) {
+    return("1980-1990")
+  } else if (death_year <= 2000) {
+    return("1990-2000")
+  } else if (death_year <= 2010) {
+    return("2000-2010")
+  } else if (death_year <= 2020) {
+    return("2010-2020")
+  } else {
+    return("no info")
+  }
+}
+
+year_grouped <- journalists |>
+  mutate(year = sapply(death_year, year_cat))
+
+#Avr life span of journalist dying abroad annd dying in home country throughout the years
+bar_plot <- year_grouped |>
+  select('bd_coincide', 'life_length', 'year') |> 
+  na.omit() |>
+  group_by(bd_coincide, year) |>
+  summarise(avr_life_span = mean(life_length), total = n()) |>
+  # print()
+  ggplot()+
+  aes(x= year, y = avr_life_span, color = bd_coincide)+
+  labs(x = "Average life span (Yrs)", y = "Years", title = "Journalists' average life span based on death place")+
+  geom_col(position = "dodge")
+
 
 # active_years <- read_csv('journalists.csv') |>
 #   select("title", "ontology/deathYear", 'ontology/activeYears', 'ontology/activeYearsEndDate', 'ontology/activeYearsStartDate', 'ontology/activeYearsEndYear', 'ontology/activeYearsStartYear') |>
