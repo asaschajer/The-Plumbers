@@ -14,4 +14,35 @@ life_length_plot <- read_csv('journalists.csv') |>
   theme(plot.title = element_text(face = "bold", size = 14))+
   geom_bar(position = 'dodge')
 
-ggsave('life_length.png', plot = life_length_plot)
+active_years <- read_csv('journalists.csv') |>
+  select("title", "ontology/deathYear", 'ontology/activeYears', 'ontology/activeYearsEndDate', 'ontology/activeYearsStartDate', 'ontology/activeYearsEndYear', 'ontology/activeYearsStartYear') |>
+  rename(deathYear = "ontology/deathYear", 'endYear' = 'ontology/activeYearsEndYear')
+
+death_on_duty_data <- active_years |>
+    mutate(
+    died_on_duty = as.integer(endYear == deathYear),
+  lived = as.integer(endYear != deathYear)) |>
+  pivot_longer(
+    cols = c(died_on_duty, lived),
+    names_to = "death_on_duty",
+    values_to = "on_duty_or_not"
+  ) |>
+  group_by(death_on_duty) |>
+  summarise(total = sum(on_duty_or_not, na.rm=TRUE))
+
+
+ggplot(death_on_duty_data) +
+  aes(x = death_on_duty, y = total / sum(total)) +
+  geom_col(position = 'dodge') +
+  scale_y_continuous(labels = scales::label_percent()) +
+    labs (
+    title = 'Journalists deceased on duty',
+    subtitle = 'DQ: How often do journalists die while still being officially employed?',
+    y = 'Number of journalists', # whose birth and death locations differ/coincide
+    x = ''
+  ) +
+  scale_x_discrete(labels = c('Died on duty', 'Died after retirement')) +
+  theme_minimal() +
+  theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14))
+
+ggsave('died_on_duty.png')
