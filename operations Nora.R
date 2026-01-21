@@ -45,5 +45,5 @@ suicide, concussion, decapitation) among journalists?")+
   theme(plot.title = element_text(face="bold", size= 14))+
   geom_col()+
   scale_x_continuous(breaks = seq(0, 12, by = 1))
-ggsave("Causes_of_death_grouped.png",width=10,height=10)
+ggsave("Causes_of_death_grouped.png")
 
