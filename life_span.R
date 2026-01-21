@@ -1,6 +1,8 @@
+install.packages("ggplot2")
 # Calculate the journalist life length
 library(tidyverse)
 library(dplyr)
+library(ggplot2)
 
 journalists <- read_csv('journalists.csv') |>
   select("title", 
@@ -25,7 +27,14 @@ journalists <- read_csv('journalists.csv') |>
     bd_coincide = (birth_place == death_place),
     life_length = death_year - birth_year
   ) |>
-  filter(death_year >= 1900)
+  filter(death_year >= 1900)|>
+  print(n= 705)
+
+journalists_country <- read_csv('journalists.csv') |>
+  select('ontology/deathPlace_label', "ontology/birthYear")|>
+  na.omit()
+
+write.csv(journalists_country, file = "Journalists_country.csv", row.names = FALSE)
 
 # life_length_plot <- read_csv('journalists.csv') |>
 #   select("title", "ontology/occupation_label", "ontology/birthYear", "ontology/deathYear")|>
@@ -99,11 +108,14 @@ bar_plot <- year_grouped |>
   na.omit() |>
   group_by(bd_coincide, year) |>
   summarise(avr_life_span = mean(life_length), total = n()) |>
-  # print()
-  ggplot()+
-  aes(x= year, y = avr_life_span, color = bd_coincide)+
-  labs(x = "Average life span (Yrs)", y = "Years", title = "Journalists' average life span based on death place")+
-  geom_col(position = "dodge")
+  print()
+  # ggplot()+
+  # aes(x= year, y = avr_life_span, fill = bd_coincide)+
+  # labs(x = "Average life span (Yrs)", y = "Years", title = "Journalists' average life span based on death place")+
+  # labs(fill = "Location of death")+
+  # scale_fill_manual(values = c("#e30000ff", "#80c7f6ff"))+
+  # scale_fill_discrete(labels = c("Died abroad", "Died in home country"))+
+  # geom_col(position = "dodge")
 
 
 # active_years <- read_csv('journalists.csv') |>
