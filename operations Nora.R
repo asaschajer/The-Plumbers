@@ -1,6 +1,7 @@
 library(tidyverse)
 library(dplyr)
 
+
 d <- read_csv("journalists.csv")
 # Then convert  the JSON data to dataframe
 df <- d|>
@@ -23,11 +24,26 @@ ggplot(data = df) +
   aes(x = death_cause, y=death_counts) +
     labs(x="Death Cause", y='Number of deaths')+
   geom_bar(stat="summary")
-ggsave("proposal_plot.pdf",width=10,height=10)
-
+ggsave("Causes_of_death_ungrouped.pdf",width=10,height=10)
 
 new_df <- df|>
   pivot_wider(names_from=death_cause, values_from=death_counts)|>
-  group_by('Assassination', 'Decapitation','')
-  
+  mutate(`Hazardous deaths`= Assassination + Decapitation+`Ballistic trauma`+ `Concussion | Suicide` +`Execution by firing squad`+ Hanging + Sniper +Suicide)|>
+  pivot_longer(c(`Hazardous deaths`,Cancer,`Myocardial infarction`, `Renal failure`,`Brain tumor`, `Colorectal cancer`, `Esophageal cancer`))|>
+  rename(Death_cause=name, Death_counts=value)|>
+  select(Death_cause,Death_counts)|>
+  arrange(desc(Death_counts))
+  #grouped_hazard_deaths =group_by('Assassination', 'Decapitation','Ballistic trauma','Concussion|Suicide','Hanging','Sniper','Suicide')
+
 print(new_df)
+
+ggplot(data = new_df) +
+  # arrange(desc(new_df))+
+  aes(x =Death_counts,y= reorder(Death_cause,Death_counts)) +
+    labs(x="Death count", y="Death cause", title = "Count of Hazardous and non hazardous deaths", subtitle= "DQ:How prevalent are violent death causes (assassination, sniper, hang,
+suicide, concussion, decapitation) among journalists?")+
+  theme(plot.title = element_text(face="bold", size= 14))+
+  geom_col()+
+  scale_x_continuous(breaks = seq(0, 12, by = 1))
+ggsave("Causes_of_death_grouped.png",width=10,height=10)
+
