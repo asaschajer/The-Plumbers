@@ -13,7 +13,7 @@ life_length_plot <- read_csv('journalists.csv') |>
   aes(x = life_length)+
   labs(x = "Life lengths (Yrs)", y = 'Number of journalists', title = 'Differences in life lengths among journalists', subtitle = 'DQ: Are there any distinct differences in the life lengths of different journalists?' )+
   theme(plot.title = element_text(face = "bold", size = 14))+
-  geom_bar(position = 'dodge')
+  geom_bar(position = 'dodge', fill = "#697fb3ff")
 
 ggsave('life_length.png', plot = life_length_plot, width = 10, height = 5)
 
@@ -36,7 +36,6 @@ death_on_duty_data <- active_years |>
 
 ggplot(death_on_duty_data) +
   aes(x = death_on_duty, y = total / sum(total)) +
-  geom_col(position = 'dodge') +
   scale_y_continuous(labels = scales::label_percent()) +
     labs (
     title = 'Journalists deceased on duty',
@@ -46,7 +45,8 @@ ggplot(death_on_duty_data) +
   ) +
   scale_x_discrete(labels = c('Died on duty', 'Died after retirement')) +
   theme_minimal() +
-  theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14))
+  theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14))+
+  geom_col(position = 'dodge', fill = "#697fb3ff") 
 
 ggsave('died_on_duty.png')
 
