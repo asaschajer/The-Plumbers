@@ -8,11 +8,14 @@ life_length_plot <- read_csv('journalists.csv') |>
   rename('ontology_birthYear' = 'ontology/birthYear', 'ontology_deathYear' = 'ontology/deathYear' )|>
   mutate(ontology_birthYear = as.numeric(ontology_birthYear), ontology_deathYear = as.numeric(ontology_deathYear))|>
   mutate(life_length = ontology_deathYear - ontology_birthYear)|>
+  filter(life_length > 0)|>
   ggplot()+
   aes(x = life_length)+
   labs(x = "Life lengths (Yrs)", y = 'Number of journalists', title = 'Differences in life lengths among journalists', subtitle = 'DQ: Are there any distinct differences in the life lengths of different journalists?' )+
   theme(plot.title = element_text(face = "bold", size = 14))+
   geom_bar(position = 'dodge')
+
+ggsave('life_length.png', plot = life_length_plot, width = 10, height = 5)
 
 active_years <- read_csv('journalists.csv') |>
   select("title", "ontology/deathYear", 'ontology/activeYears', 'ontology/activeYearsEndDate', 'ontology/activeYearsStartDate', 'ontology/activeYearsEndYear', 'ontology/activeYearsStartYear') |>
