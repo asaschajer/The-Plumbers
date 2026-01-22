@@ -153,7 +153,11 @@ bar_plot <- year_grouped |>
   labs(
     x = "Years",
     y = "Average life span (Yrs)", 
-    title = "Journalists' average life span based on death place"
+    title = "Journalists' average life span based on death place",
+    subtitle = "DQ: Do journalists who died abroad have a shorter life expectency of journalists\nwho died in their home country?"
+  )+
+  theme(
+    plot.title = element_text(face = "bold", size = 14)
   )+
   labs(fill = "Location of death")+
   scale_fill_manual(
@@ -163,7 +167,7 @@ bar_plot <- year_grouped |>
   
 
 
-ggsave('life_span_vs_location_death.png', plot = bar_plot)
+ggsave('life_span_vs_location_death.png', plot = bar_plot,  width = 12, height = 8)
 
 # active_years <- read_csv('journalists.csv') |>
 #   select("title", "ontology/deathYear", 'ontology/activeYears', 'ontology/activeYearsEndDate', 'ontology/activeYearsStartDate', 'ontology/activeYearsEndYear', 'ontology/activeYearsStartYear') |>
