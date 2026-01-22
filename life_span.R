@@ -1,8 +1,6 @@
-install.packages("ggplot2")
+
 # Calculate the journalist life length
 library(tidyverse)
-library(dplyr)
-library(ggplot2)
 
 journalists <- read_csv('journalists.csv') |>
   select("title", 
@@ -52,7 +50,7 @@ write.csv(journalists_country, file = "Journalists_country.csv", row.names = FAL
 # ggsave('life_length.png', plot = life_length_plot, width = 10, height = 5)
 
 #avr life span of journalist per year
-avr_life_span_plot <- read_csv('journalists.csv') |>
+avr_life_span <- read_csv('journalists.csv') |>
   select("title", "ontology/occupation_label", "ontology/birthYear", "ontology/deathYear")|>
   na.omit()|>
   rename('ontology_birthYear' = 'ontology/birthYear', 'ontology_deathYear' = 'ontology/deathYear' )|>
@@ -60,8 +58,10 @@ avr_life_span_plot <- read_csv('journalists.csv') |>
   mutate(life_length = ontology_deathYear - ontology_birthYear)|>
   group_by(ontology_deathYear)|>
   filter(life_length > 0 & ontology_deathYear > 1900)|>
-  summarise(avr_life_span = mean(life_length))|>
-ggplot() +
+  summarise(avr_life_span = mean(life_length))
+
+avr_life_span_plot <- avr_life_span |>
+  ggplot() +
   aes(x = ontology_deathYear, y = avr_life_span) +
   geom_line(color = "#697fb3ff", linewidth = 1) +
   geom_vline(
@@ -129,14 +129,12 @@ bar_plot <- year_grouped |>
   na.omit() |>
   group_by(bd_coincide, year) |>
   summarise(avr_life_span = mean(life_length), total = n()) |>
-  print()
-  # ggplot()+
-  # aes(x= year, y = avr_life_span, fill = bd_coincide)+
-  # labs(x = "Average life span (Yrs)", y = "Years", title = "Journalists' average life span based on death place")+
-  # labs(fill = "Location of death")+
-  # scale_fill_manual(values = c("#e30000ff", "#80c7f6ff"))+
-  # scale_fill_discrete(labels = c("Died abroad", "Died in home country"))+
-  # geom_col(position = "dodge")
+  ggplot()+
+  aes(x= year, y = avr_life_span, fill = bd_coincide)+
+  labs(x = "Years", y = "Average life span (Yrs)", title = "Journalists' average life span based on death place")+
+  labs(fill = "Location of death")+
+  scale_fill_discrete(labels = c("Died abroad", "Died in home country"))+
+  geom_col(position = position_dodge(preserve = "single"))
 
 
 # active_years <- read_csv('journalists.csv') |>
