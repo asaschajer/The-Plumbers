@@ -35,6 +35,6 @@ ggplot(young_journalists, aes(x = country, y = avg_life_span)) +
   labs(
     x = "Country",
     y = "Average life span (years)",
-    title = "Average life span of journalists who died at age 50 or younger"
+    title = "Average life span of journalists who died at age 50 or younger by country"
   ) +
   theme(axis.text.x = element_text(angle = 45,hjust = 1))
