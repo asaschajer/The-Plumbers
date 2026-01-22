@@ -1,6 +1,7 @@
 
 # Calculate the journalist life length
 library(tidyverse)
+library(dplyr)
 
 journalists <- read_csv('journalists.csv') |>
   select("title", 
@@ -25,12 +26,12 @@ journalists <- read_csv('journalists.csv') |>
     bd_coincide = (birth_place == death_place),
     life_length = death_year - birth_year
   ) |>
-  filter(death_year >= 1900)|>
+  filter(death_year >= 1900)
 
 
 all_journalists <- journalists |>
   na.omit()|>
-  left_join(read_csv("journalists_country.csv"), by ='death_place')
+  left_join(read_csv("all_country_mapping.csv"), by ='death_place')
   # select(life_length, birth_country, death_country, death_year, birth_year, -death_place, -birth_place)
 
 # journalists_country <- read_csv('journalists.csv') |>
