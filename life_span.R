@@ -61,13 +61,34 @@ avr_life_span_plot <- read_csv('journalists.csv') |>
   group_by(ontology_deathYear)|>
   filter(life_length > 0 & ontology_deathYear > 1900)|>
   summarise(avr_life_span = mean(life_length))|>
-  ggplot()+
-  aes(x = ontology_deathYear, y = avr_life_span)+
-  labs(x = "Years", y = "Average journalist's life span", title = "Differences in journalist's life span within the years", subtitle = 'DQ: Are there any distinct differences in the life lengths of different journalists?' )+
-  theme(plot.title = element_text(face = "bold", size = 14))+
-  geom_line(color = "#697fb3ff")
+ggplot() +
+  aes(x = ontology_deathYear, y = avr_life_span) +
+  geom_line(color = "#697fb3ff", linewidth = 1) +
+  geom_vline(
+    xintercept = c(1918, 1945, 1991, 2001),
+    linetype = "dashed",
+    color = "grey40"
+  ) +
+  annotate(
+    "text",
+    x = c(1914, 1940, 1965, 1996, 2010),
+    y = max(avr_life_span, na.rm = TRUE),
+    label = c("Pre-WWI", "Pre–WWII", "Cold War", "Post–Cold War", "Post-2001"),
+    vjust = -0.5,
+    size = 3.5
+  ) +
+  labs(
+    x = "Year of death",
+    y = "Average journalist lifespan (years)",
+    title = "Journalists’ average lifespan across historical eras",
+    subtitle = "DQ: Are there any distinct differences in the life lengths of different journalists?\nAverage lifespan trends aligned with major geopolitical periods"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14)
+  )
 
-ggsave('avr_life_span.png', plot = avr_life_span_plot, width = 10, height = 5)
+ggsave('his_eras_avr_life_span.png', plot = avr_life_span_plot, width = 10, height = 5)
 
 year_cat <- function(death_year) {
   if (death_year <= 1910){
