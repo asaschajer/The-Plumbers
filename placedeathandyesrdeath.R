@@ -26,27 +26,6 @@ count_per_year_plot <- ggplot(data = deaths_by_year) +
 
 ggsave('count_per_year_plot.png', plot = count_per_year_plot)
 
-# ----------------------------
-# PLOT 2: Top 10 places with the most journalists' death => WE WILL NOT USE THIS GRAPH
-# ----------------------------
-
-# # 5) Hacer una tabla resumen: conteo por lugar
-# deaths_by_place <- journalists_raw |>
-#   filter(`ontology/deathPlace_label` == `ontology/deathPlace_label`) |>
-#   filter(`ontology/deathPlace_label` != "") |>
-#   group_by(`ontology/deathPlace_label`) |>
-#   summarise(n = n()) |>
-#   arrange(desc(n))
-
-# # 6) Quedarnos con el top 10 (usamos head() para mantenerlo simple)
-# top10_places <- head(deaths_by_place, 10)
-
-# # 7) Bar plot del top 10 lugares (puede quedar apretado si los nombres son largos)
-# ggplot(data = top10_places) +
-#   aes(x = `ontology/deathPlace_label`, y = n) +
-#   labs(x = "Place of death", y = "Number od deaths ", title = "Top 10 places of deaths ")+
-#     geom_col(fill = "#697fb3ff") 
-
 
 
 
