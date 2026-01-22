@@ -42,40 +42,6 @@ all_journalists <- journalists |>
   ) |>
   filter(death_year >= 1900)
 
-journalists_death_place_cause <- all_journalists |>
-  mutate(
-    death_year = as.numeric(death_year),
-    bd_coincide = ifelse(birth_country == death_country,
-                         "Same place",
-                         "Different place"),
-    cause_type = ifelse(death_cause %in% violent_causes, "Violent", "Non-violent")
-  ) |>
-  filter(!is.na(death_cause), death_year >= 1900) |>
-  filter(!is.na(bd_coincide))
-
-plot_data <- journalists_death_place_cause |>
-  group_by(bd_coincide, cause_type) |>
-  summarise(count = n(), .groups = "drop")
-
-# plot_data_total <- journalists_death_place_cause |>
-#   group_by(bd_coincide) |>
-#   # summarise(count = n(), .groups = "drop") |>
-#   summarise(total = sum(count, na.rm=TRUE))
-
-bd_place_data <- all_journalists |>
-  mutate(
-    bd_coincide = as.integer(birth_country == death_country),
-  bd_differ = as.integer(birth_country != death_country)) 
-
-bd_total <- bd_place_data |>
-  pivot_longer(
-    cols = c(bd_coincide, bd_differ),
-    names_to = "birth_death",
-    values_to = "coincide_or_differ"
-  ) |>
-  group_by(birth_death) |>
-  summarise(total = sum(coincide_or_differ, na.rm=TRUE))
-
 journalists_bd <- all_journalists |>
   mutate(
     birth_year = as.numeric(birth_year),
@@ -89,27 +55,28 @@ journalists_bd <- all_journalists |>
 
 mean_bd <- journalists_bd |>
   group_by(bd_coincide) |>
-  summarise(mean = mean(life_length))
+  summarise(mean_lifespan = mean(life_length, na.rm = TRUE), .groups = 'drop')
 
 ggplot(journalists_bd) +
   aes(x = bd_coincide, y = life_length, fill = bd_coincide) +
-  geom_boxplot(show.legend = 0) +
+  geom_violin(show.legend = 0, trim = 0) +
+  geom_boxplot(width=0.1, color="grey", alpha=0.2, show.legend = 0) +
   geom_hline(
     data = mean_bd,
-    aes(yintercept = mean, color = bd_coincide),
+    aes(yintercept = mean_lifespan, color = bd_coincide),
     linetype = "dashed",
     linewidth = 1
   ) +
   scale_fill_manual(
     values = c(
-      "Died at birthplace" = "#697fb3ff",
-      "Died elsewhere" = "#c44e52"
+      "Died at birthplace" = "#698fb3ff",
+      "Died elsewhere" = "#697fb3ff"
     )
   ) +
   scale_color_manual(
     values = c(
-      "Died at birthplace" = "#697fb3ff",
-      "Died elsewhere" = "#c44e52"
+      "Died at birthplace" = "#699fb3ff",
+      "Died elsewhere" = "#697fb3ff"
     ),
     labels = c(
       "Died at birthplace" = "Mean lifespan (if died at birthplace)",
@@ -128,55 +95,93 @@ ggplot(journalists_bd) +
   theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14),
     legend.position = "right")
 
-ggsave("Journalists_lifespan_by_place_of_death.png")
+ggsave("Journalists_lifespan_by_place_of_death_VIOLIN.png")
 
-# ggplot(bd_total) +
-#   aes(x = birth_death, y = total) +
-#   geom_col(position = 'dodge') +
-#   scale_fill_manual(
-#           values = c(
-#       "Non-violent" = "#697fb3ff",
-#       "Violent" = "#c44e52"
-#     )) +
-#   labs(
-#     title = "Journalists' place of death and type of death cause",
-#     subtitle = "DQ: How often do journalists die outside their country or place of birth,\nand what might this indicate about professional risk and mobility?",
-#     x = "Birth place and death place",
-#     y = "Number of journalists",
-#     fill = "Cause of death"
-#   ) +
-#   theme_minimal() +
-#   theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14)) 
+# line plot by place align with history, do violent death also die young?
+#  
+
+
+# journalists_death_place_cause <- all_journalists |>
+#   mutate(
+#     death_year = as.numeric(death_year),
+#     bd_coincide = ifelse(birth_country == death_country,
+#                          "Same place",
+#                          "Different place"),
+#     cause_type = ifelse(death_cause %in% violent_causes, "Violent", "Non-violent")
+#   ) |>
+#   filter(!is.na(death_cause), death_year >= 1900) |>
+#   filter(!is.na(bd_coincide))
+
+# plot_data <- journalists_death_place_cause |>
+#   group_by(bd_coincide, cause_type) |>
+#   summarise(count = n(), .groups = "drop")
+
+# # plot_data_total <- journalists_death_place_cause |>
+# #   group_by(bd_coincide) |>
+# #   # summarise(count = n(), .groups = "drop") |>
+# #   summarise(total = sum(count, na.rm=TRUE))
+
+# bd_place_data <- all_journalists |>
+#   mutate(
+#     bd_coincide = as.integer(birth_country == death_country),
+#   bd_differ = as.integer(birth_country != death_country)) 
+
+# bd_total <- bd_place_data |>
+#   pivot_longer(
+#     cols = c(bd_coincide, bd_differ),
+#     names_to = "birth_death",
+#     values_to = "coincide_or_differ"
+#   ) |>
+#   group_by(birth_death) |>
+#   summarise(total = sum(coincide_or_differ, na.rm=TRUE))
+
+# # ggplot(bd_total) +
+# #   aes(x = birth_death, y = total) +
+# #   geom_col(position = 'dodge') +
+# #   scale_fill_manual(
+# #           values = c(
+# #       "Non-violent" = "#697fb3ff",
+# #       "Violent" = "#c44e52"
+# #     )) +
+# #   labs(
+# #     title = "Journalists' place of death and type of death cause",
+# #     subtitle = "DQ: How often do journalists die outside their country or place of birth,\nand what might this indicate about professional risk and mobility?",
+# #     x = "Birth place and death place",
+# #     y = "Number of journalists",
+# #     fill = "Cause of death"
+# #   ) +
+# #   theme_minimal() +
+# #   theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14)) 
   
 
 
-# # Stacked bar plot
-# ggplot(plot_data) +
-#   aes(x = bd_coincide, y = count / sum(count), fill = cause_type) +
-#   geom_col(position = 'dodge') +
-#   scale_fill_manual(
-#           values = c(
-#       "Non-violent" = "#697fb3ff",
-#       "Violent" = "#c44e52"
-#     )) +
-#   labs(
-#     title = "Journalists' place of death and type of death cause",
-#     subtitle = "DQ: How often do journalists die outside their country or place of birth,\nand what might this indicate about professional risk and mobility?",
-#     x = "Birth place and death place",
-#     y = "Number of journalists",
-#     fill = "Cause of death"
-#   ) +
-#   theme_minimal() +
-#   theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14)) 
+# # # Stacked bar plot
+# # ggplot(plot_data) +
+# #   aes(x = bd_coincide, y = count / sum(count), fill = cause_type) +
+# #   geom_col(position = 'dodge') +
+# #   scale_fill_manual(
+# #           values = c(
+# #       "Non-violent" = "#697fb3ff",
+# #       "Violent" = "#c44e52"
+# #     )) +
+# #   labs(
+# #     title = "Journalists' place of death and type of death cause",
+# #     subtitle = "DQ: How often do journalists die outside their country or place of birth,\nand what might this indicate about professional risk and mobility?",
+# #     x = "Birth place and death place",
+# #     y = "Number of journalists",
+# #     fill = "Cause of death"
+# #   ) +
+# #   theme_minimal() +
+# #   theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14)) 
   
 
-#Also try:
- #aes(x = bd_coincide, fill = cause_type) +
-  #geom_bar(position = "fill") +
-  #facet_wrap(~ decade) +
-  #scale_y_continuous(labels = scales::percent) 
+# #Also try:
+#  #aes(x = bd_coincide, fill = cause_type) +
+#   #geom_bar(position = "fill") +
+#   #facet_wrap(~ decade) +
+#   #scale_y_continuous(labels = scales::percent) 
 
-#ggsave("Death_place_vs_cause_type_stacked_bar.png")
+# #ggsave("Death_place_vs_cause_type_stacked_bar.png")
 
-# box plot: lifespan by place of death (mobility risk)
+# # box plot: lifespan by place of death (mobility risk)
 
