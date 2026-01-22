@@ -25,10 +25,3 @@ count_per_year_plot <- ggplot(data = deaths_by_year) +
   geom_line(color="#697fb3ff", size=1)
 
 ggsave('count_per_year_plot.png', plot = count_per_year_plot)
-
-
-
-
-
-
-
