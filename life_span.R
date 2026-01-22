@@ -149,14 +149,19 @@ bar_plot <- year_grouped |>
   summarise(avr_life_span = mean(life_length), total = n()) |>
   ggplot()+
   aes(x= year, y = avr_life_span, fill = bd_coincide)+
+  geom_col(position = position_dodge(preserve = "single"))+
   labs(
     x = "Years",
     y = "Average life span (Yrs)", 
     title = "Journalists' average life span based on death place"
   )+
   labs(fill = "Location of death")+
-  scale_fill_discrete(labels = c("Died abroad", "Died in home country"))+
-  geom_col(position = position_dodge(preserve = "single"))
+  scale_fill_manual(
+    values = c("#697fb3ff","#c44e52"),
+    labels = c("Died abroad", "Died in home country")
+  )
+  
+
 
 ggsave('life_span_vs_location_death.png', plot = bar_plot)
 
