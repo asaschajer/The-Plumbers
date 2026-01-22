@@ -26,15 +26,17 @@ young_journalists <- journalists |>
   group_by(country) |>
   summarise(avg_life_span = mean(life_length))
 
-
 print(young_journalists)
 
 # Bar graph country on x-axis, average life span on y-axis
 ggplot(young_journalists, aes(x = country, y = avg_life_span)) +
-  geom_col() +
+  geom_col(fill= "#697fb3ff") +
   labs(
     x = "Country",
     y = "Average life span (years)",
     title = "Average life span of journalists who died at age 50 or younger by country"
   ) +
   theme(axis.text.x = element_text(angle = 45,hjust = 1))
+
+ggsave('Average_lifespan_per_country.png', plot = avr_life_span_plot)
+
