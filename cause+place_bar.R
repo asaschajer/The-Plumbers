@@ -26,16 +26,24 @@ journalists_death_place_cause <- read_csv("journalists.csv") |>
                          "Different place"),
     cause_type = ifelse(death_cause %in% violent_causes, "Violent", "Non-violent")
   ) |>
-  filter(!is.na(death_cause), death_year >= 1900)
+  filter(!is.na(death_cause), death_year >= 1900) |>
+  filter(!is.na(bd_coincide))
 
 plot_data <- journalists_death_place_cause |>
   group_by(bd_coincide, cause_type) |>
   summarise(count = n(), .groups = "drop")
 
+clean_plot_data <- plot_data 
+
 # Stacked bar plot
-death_place_cause_plot <- ggplot(plot_data) +
+ggplot( clean_plot_data) +
   aes(x = bd_coincide, y = count, fill = cause_type) +
-  geom_col(fill = "#697fb3ff") +
+  geom_col(position = 'stack') +
+  scale_fill_manual(
+          values = c(
+      "Non-violent" = "#697fb3ff",
+      "Violent" = "#c44e52"
+    )) +
   labs(
     title = "Journalists' place of death and type of death cause",
     subtitle = "DQ: How often do journalists die outside their country or place of birth,\nand what might this indicate about professional risk and mobility?",
@@ -88,7 +96,7 @@ lifespan_place_plot <- read_csv("journalists.csv") |>
     subtitle = "DQ: How often do journalists die outside their country or place of birth,\nand what might this indicate about professional risk and mobility?",
  ) +
   theme_minimal() +
-theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14)
+theme(plot.title = element_text(face = 'bold', size = 14), axis.text.x = element_text(size = 9), axis.text.y = element_text(size = 9), axis.title = element_text(size = 14),
     legend.position = "none")
 
 ggsave("Journalists_lifespan_by_place_of_death.png", plot = lifespan_place_plot)
