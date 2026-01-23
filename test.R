@@ -80,16 +80,19 @@ ggplot(violence_share) +
   scale_y_continuous(labels = scales::percent) +
   labs(
     x = "",
-    y = "Share of deaths",
+    y = "Proportion of deaths",
     fill = "Cause of death",
-    title = "Violent vs non-violent deaths by place of death",
-    subtitle = "Journalists who died abroad are compared to those who died at their birthplace"
+    title = "Violent vs non-violent deaths compared by place of death",
+    subtitle = "DQ: What proportion of journalists’ deaths are from violent causes (assassination,\ndecapitation, suicide, etc.) based on the deaths’ locations?"
   ) +
   theme_minimal() +
   theme(
     plot.title = element_text(face = "bold", size = 14),
-    axis.text = element_text(size = 10)
+    axis.text = element_text(size = 10),
+    legend.position = 'none'
   )
+
+ggsave('violent1_bd_place_proportion_STACKED.png')
 
 violent_only <- journalists_violence |>
   filter(cause_type == "Violent")
@@ -100,22 +103,25 @@ ggplot(violent_only) +
   geom_boxplot(width = 0.1, alpha = 0.3, color = "grey30") +
   scale_fill_manual(
     values = c(
-      "Died at birthplace" = "#697fb3ff",
-      "Died elsewhere" = "#c44e52"
+      "Died at birthplace" = "#699fb3ff",
+      "Died elsewhere" = "#697fb3ff"
     )
   ) +
   labs(
     x = "",
     y = "Lifespan (years)",
     title = "Lifespan of journalists who died violently",
-    subtitle = "Comparison between deaths at birthplace and deaths elsewhere",
+    subtitle = "H: Among journalists who died violently, those who died abroad die younger due to the high risk of the profession",
     fill = "Place of death"
   ) +
   theme_minimal() +
   theme(
     plot.title = element_text(face = "bold", size = 14),
-    axis.text = element_text(size = 10)
+    axis.text = element_text(size = 10),
+    legend.position = 'none'
   )
+
+ggsave('violent3_lifespan distribution_VIOLIN.png')
 
 violent_time <- journalists_violence |>
   filter(cause_type == "Violent") |>
@@ -234,12 +240,38 @@ ggplot(journalists_violence) +
   theme_minimal()
 
 overall_violent_share <- journalists_violence |>
-  summarise(
-    violent = sum(cause_type == "Violent"),
-    total = n(),
-    proportion = violent / total
-  ) |>
-  print()
+  count(cause_type) |>
+  mutate(
+    proportion = n / sum(n)
+  )
+
+ggplot(overall_violent_share) +
+  aes(x = "All journalists", y = proportion, fill = cause_type) +
+  geom_col(width = 0.5) +
+  scale_fill_manual(
+    values = c(
+      "Violent" = "#c44e52",
+      "Non-violent" = "#697fb3ff"
+    )
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    x = "",
+    y = "Proportion of deaths",
+    fill = "Cause of death",
+    title = "Proportion of journalists’ deaths by cause type",
+    subtitle = "DQ: What proportion of journalists’ deaths are from violent causes (assassination,\ndecapitation, suicide, etc.)?"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.x = element_text(size = 10),
+    legend.position = 'none'
+  )
+
+ggsave('violent2_overall_proportion_STACKED.png')
+
+
 
 # ggplot(journalists_bd) +
 #   aes(x = bd_coincide, y = life_length, fill = bd_coincide) +
