@@ -1,18 +1,8 @@
 library(tidyverse)
 
 countries_wanted <- c(
-  "Afghanistan","Angola","Argentina","Australia","Austria","Azerbaijan",
-  "Bangladesh","Belarus","Belgium","Bosnia and Herzegovina","Brazil","Canada",
-  "Chile","China","Colombia","Cuba","Czechia","Dominican Republic","Egypt",
-  "Finland","France","Georgia","Germany","Greece","Guam","Guatemala","Guyana",
-  "Haiti","Hungary","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy",
-  "Jamaica","Japan","Kyrgyzstan","Latvia","Lebanon","Libya","Lithuania","Macao",
-  "Malta","Mexico","Moldova","Myanmar","Netherlands","New Zealand","Nicaragua",
-  "Nigeria","North Macedonia","Norway","Pakistan","Paraguay","Philippines","Poland",
-  "Portugal","Romania","Russia","Serbia","Slovenia","Somalia","South Africa",
-  "Spain","Sri Lanka","Suriname","Sweden","Switzerland","Syria",
-  "Trinidad and Tobago","Turkey","Ukraine","United Kingdom","United States",
-  "Uruguay","Venezuela","Vietnam"
+    "France","Canada","Israel","Norway","United Kingdom","United States",
+  "Italy","Germany","Netherlands","Colombia","Australia","Spain","Russia","Brazil"
 )
 
 life <- read_csv("life-expectancy.csv")

@@ -76,10 +76,11 @@ plot_data <- bind_rows(
 
 ggplot(plot_data, aes(x = country, y = years, fill = measure)) +
   geom_col(position = "dodge") +
-  coord_flip() +
   labs(
     x = "Country",
     y = "Years",
     title = "Journalists vs Population Life Expectancy (selected countries)"
-  )
+  )+
+   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 
