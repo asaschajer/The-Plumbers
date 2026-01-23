@@ -1,7 +1,5 @@
-
-# Calculate the journalist life length
 library(tidyverse)
-library(dplyr)
+
 
 journalists <- read_csv('journalists.csv') |>
   mutate(
@@ -16,6 +14,7 @@ journalists <- read_csv('journalists.csv') |>
     birth_place, 
     death_place
   )
+
 
 all_journalists <- journalists |>
   na.omit()|>
@@ -45,36 +44,6 @@ avr_life_span <- read_csv('journalists.csv') |>
   group_by(ontology_deathYear)|>
   filter(life_length > 0 & ontology_deathYear > 1900)|>
   summarise(avr_life_span = mean(life_length))
-
-avr_life_span_plot <- avr_life_span |>
-  ggplot() +
-  aes(x = ontology_deathYear, y = avr_life_span) +
-  geom_line(color = "#697fb3ff", linewidth = 1) +
-  geom_vline(
-    xintercept = c(1918, 1945, 1991, 2001),
-    linetype = "dashed",
-    color = "grey40"
-  ) +
-  annotate(
-    "text",
-    x = c(1914, 1940, 1965, 1996, 2010),
-    y = max(avr_life_span, na.rm = TRUE),
-    label = c("Pre-WWI", "Pre–WWII", "Cold War", "Post–Cold War", "Post-2001"),
-    vjust = -0.5,
-    size = 3.5
-  ) +
-  labs(
-    x = "Year of death",
-    y = "Average journalist lifespan (years)",
-    title = "Journalists’ average lifespan across historical eras",
-    subtitle = "DQ: Are there any distinct differences in the life lengths of different journalists?\nAverage lifespan trends aligned with major geopolitical periods"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14)
-  )
-
-ggsave('his_eras_avr_life_span.png', plot = avr_life_span_plot, width = 10, height = 5)
 
 year_cat <- function(death_year) {
   if (death_year <= 1910){
@@ -114,74 +83,9 @@ bar_plot <- year_grouped |>
   select('bd_coincide', 'life_length', 'year') |> 
   na.omit() |>
   group_by(bd_coincide, year) |>
-  summarise(avr_life_span = mean(life_length), total = n())
-
-mean_bd_year <- all_journalists |>
-  mutate(
-    bd_coincide = ifelse(
-      birth_country == death_country,
-      "Died at birthplace",
-      "Died elsewhere"
-    )
-  ) |>
-  filter(
-    life_length > 0,
-    death_year >= 1900
-  ) |>
-  group_by(death_year, bd_coincide) |>
-  summarise(
-    mean_life_span = mean(life_length, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-ggplot(mean_bd_year) +
-  aes(
-    x = death_year,
-    y = mean_life_span,
-    color = bd_coincide
-  ) +
-  geom_line(linewidth = 1) +
-  geom_vline(
-    xintercept = c(1918, 1945, 1991, 2001),
-    linetype = "dashed",
-    color = "grey40"
-  ) +
-  annotate(
-    "text",
-    x = c(1914, 1940, 1965, 1996, 2010),
-    y = max(mean_bd_year$mean_life_span, na.rm = TRUE),
-    label = c(
-      "Pre-WWI",
-      "Pre–WWII",
-      "Cold War",
-      "Post–Cold War",
-      "Post-2001"
-    ),
-    vjust = -0.5,
-    size = 3.5
-  ) +
-  scale_color_manual(
-    values = c(
-      "Died at birthplace" = "#699fb3ff",
-      "Died elsewhere" = "#697fb3ff"
-    )
-  ) +
-  labs(
-    x = "Year of death",
-    y = "Average journalist lifespan (years)",
-    color = "Place of death",
-    title = "Journalists’ average lifespan by place of death over time",
-    subtitle = "Average lifespan trends aligned with major historical periods"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14)
-  )
-
-ggsave('life_span_vs_location_death_LINE.png', width = 12, height = 8)
-
-  ggplot(year_grouped)+
-  aes(x= year, y = life_length, fill = bd_coincide)+
+  summarise(avr_life_span = mean(life_length), total = n()) |>
+  ggplot()+
+  aes(x= year, y = avr_life_span, fill = bd_coincide)+
   geom_col(position = position_dodge(preserve = "single"))+
   labs(
     x = "Years",
@@ -194,9 +98,8 @@ ggsave('life_span_vs_location_death_LINE.png', width = 12, height = 8)
   )+
   labs(fill = "Location of death")+
   scale_fill_manual(
-    values = c("#697fb3ff", "#699fb3ff"),
+    values = c("#697fb3ff", "#f2c45f"),
     labels = c("Died elsewhere", "Died at birthplace")
   )
-  
 
-ggsave('life_span_vs_location_death_BAR.png',  width = 12, height = 8)
+ggsave('life_span_vs_location_death_BAR.png', plot = bar_plot,  width = 12, height = 8)
